@@ -55,3 +55,28 @@
   - **Kimi Work 端安装与触发未实测**——需用户在插件页「个人」页签点 ＋ 安装后，新开会话验证技能触发与 `<plugin-root>` 路径下 tools 脚本真实可跑（建议用 investment-checklist / quality-screen 抽验）。
   - 散装技能暂未清理，待插件验证通过后跑 `uninstall_loose_skills.py`；清理前散装与插件同名技能并存，可能存在触发竞争。
   - 插件未设图标（客户端默认兜底）；xueqiu_scraper.py 的 playwright 依赖限制同第 4 节。
+
+## 7. fork 迁移端到端验证（2026-10-11 追加）
+
+迁移背景：移植层从「外层非 git 目录 + 嵌套只读克隆」迁入 fork（`Flowergloden/ai-berkshire`）`kimi-work` 分支的 `kimi-work/` 子目录，`main` 保持上游纯镜像。详见 `openspec/changes/fork-integration/`。
+
+| 验证项 | 方法 | 结果 |
+|---|---|---|
+| main 纯镜像 | `git diff main upstream/main` 为空；GitHub compare `xbtlin:main...Flowergloden:main` = identical（ahead 0 / behind 0） | ✅ 通过（Sync fork 可走 fast-forward） |
+| 移植层迁移完整性 | `diff -r` 比对 8 类文件（scripts/docs×5/plugin/openspec/AGENTS.md），文件清单与内容逐字节一致 | ✅ 通过 |
+| 散装产物排除 | 仓库根 `.gitignore` 加 `kimi-work/dist/`；构建后 `git status` 0 条 dist | ✅ 通过 |
+| 新结构构建 | `python kimi-work/scripts/build_kimi_work_skills.py` 成功；插件 skills/tools 与旧工作区逐字节一致，散装 21 包中 18 包 diff 仅含 tools 绝对路径差异（检出路径变化所致，预期内）、3 包（无 tools 引用的 A 类）逐字节一致 | ✅ 通过 |
+| 规则命中断言 | 当前上游版本下 `--check` 退出码 0（11 条规则全部命中期望）；人为把「python3 tools/xxx.py」期望改为 999 → 非零退出且输出列出「期望 精确 999 次，实际 50 次」，还原后恢复 0 | ✅ 通过 |
+| CI 工作流 | `workflow_dispatch` 两次手动触发（runs 38066183148 / 38066217698）：checkout kimi-work → merge origin/main → 构建（含断言）→ 无产物变化 → 成功结束且**零 PR** | ✅ 通过（「产物有变化开 PR」「构建失败不开 PR」两场景待首次真实上游 sync 时验证） |
+| 插件重登记 | `release_plugin.py` 从新 clone 登记成功；注册表 `plugin-market/personal/ai-berkshire.json` 回读 sourcePath = `C:\Users\xdhui\CommonProjects\ai-berkshire\kimi-work\plugin\personal\ai-berkshire` | ✅ 通过 |
+| 免重启热更 + 技能触发 | Kimi Work 运行中在插件页「个人」页签安装（未重启任何进程），按钮变「使用」；新任务发送「用段永平的视角回答…」，transcript（`agents/main/memory/transcripts/days/2026-10-11/conv-aefee1a5….jsonl`）记录 `Skill "dyp-ask" loaded inline.`，回答符合技能口吻 | ✅ 通过 |
+
+### 实施期设计变更（已补记 design.md D8）
+
+GitHub 只从**默认分支**发现 workflows，与「main 纯镜像」冲突。解法：fork 默认分支改为 `kimi-work`（main 纯镜像性不受影响；PR 默认 base 与 clone 默认检出顺带一致化）。
+
+### 已知限制（如实标注）
+
+- CI「产物有变化 → 开 PR」与「构建失败 → 红且不开 PR」两条路径未实测（当前无变化场景无法触发；待首次上游 sync 观察）。
+- 本次未重跑 B 类 tools 脚本抽验（`<plugin-root>` 占位解析在 2026-10-10 第 6 节前已验证过机制，本次迁移插件产物逐字节未变，仅安装来源路径变化）；如需可再跑 investment-checklist 抽验。
+- 旧外层目录 `ai-berkshire-kimi-work-integration\` 尚未归档删除（待确认无遗漏后执行，见 fork-integration 任务 6.1）。
