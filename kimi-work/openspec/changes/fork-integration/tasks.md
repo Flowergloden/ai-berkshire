@@ -19,8 +19,8 @@
 
 ## 4. CI 工作流
 
-- [ ] 4.1 新增 `.github/workflows/kimi-work.yml`：`on: push: branches: [main]` + `workflow_dispatch`；步骤为 checkout `kimi-work` → merge `origin/main` → 跑构建（含断言）→ 产物有变化则推 `bot/kimi-work-sync-<run_id>` 并 `gh pr create` 开向 `kimi-work`（已有未合并同类 PR 时 force-push 更新）；构建失败则 workflow 红且不开 PR；验证 `workflow_dispatch` 手动触发冒烟成功
-- [ ] 4.2 验证无变化场景：对当前状态再触发一次 workflow，确认成功结束且不产生新 PR
+- [x] 4.1 新增 `.github/workflows/kimi-work.yml`：`on: push: branches: [main]` + `workflow_dispatch`；步骤为 checkout `kimi-work` → merge `origin/main` → 跑构建（含断言）→ 产物有变化则推 `bot/kimi-work-sync-<run_id>` 并 `gh pr create` 开向 `kimi-work`（已有未合并同类 PR 时 force-push 更新）；构建失败则 workflow 红且不开 PR；验证 `workflow_dispatch` 手动触发冒烟成功
+- [x] 4.2 验证无变化场景：对当前状态再触发一次 workflow，确认成功结束且不产生新 PR
 
 ## 5. 登记源切换与端到端验证
 
