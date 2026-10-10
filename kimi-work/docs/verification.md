@@ -58,7 +58,7 @@
 
 ## 7. fork 迁移端到端验证（2026-10-11 追加）
 
-迁移背景：移植层从「外层非 git 目录 + 嵌套只读克隆」迁入 fork（`Flowergloden/ai-berkshire`）`kimi-work` 分支的 `kimi-work/` 子目录，`main` 保持上游纯镜像。详见 `openspec/changes/fork-integration/`。
+迁移背景：移植层从「外层非 git 目录 + 嵌套只读克隆」迁入 fork（`Flowergloden/ai-berkshire`）`kimi-work` 分支的 `kimi-work/` 子目录，`main` 保持上游纯镜像。详见 `../../openspec/changes/fork-integration/`（openspec 目录已于 2026-10-11 上移至仓库根）。
 
 | 验证项 | 方法 | 结果 |
 |---|---|---|
