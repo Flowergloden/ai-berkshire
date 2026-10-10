@@ -1,0 +1,124 @@
+{
+  "$schema": "https://catalog.msh.team/misc/kimi.plugin.schema.json",
+  "name": "ai-berkshire",
+  "version": "0.1.0",
+  "description": "巴菲特/芒格/段永平/李录四大师价值投资方法论:21 个结构化投研技能(公司深度研究、财报精读、行业筛选、买入 Checklist、持仓管理、投资论文追踪)与配套验算工具",
+  "keywords": [
+    "价值投资",
+    "巴菲特",
+    "芒格",
+    "段永平",
+    "李录",
+    "财报分析",
+    "投资研究",
+    "选股",
+    "持仓管理",
+    "value investing"
+  ],
+  "author": "xbtlin (upstream), ported by xdhui",
+  "license": "MIT",
+  "skillInstructions": "",
+  "interface": {
+    "displayName": "AI Berkshire 价值投资研究",
+    "shortDescription": "四大师价值投资投研工作流",
+    "longDescription": "移植自开源项目 ai-berkshire(MIT)的 21 个价值投资研究技能:以巴菲特、芒格、段永平、李录的方法论为框架,覆盖深度研究(公司深研、管理层纵深、未上市公司)、财报分析(财报精读、四大师团队解读)、行业筛选(行业研究、漏斗筛选、瓶颈猎手、时代α)、持仓管理(组合审视、论文追踪、漂移检测、新闻脉搏)与思维工具(段永平问答、公众号写作)。配套 financial_rigor 等验算脚本,取数优先路由到本机官方数据插件。仅供学习研究,不构成投资建议。",
+    "developerName": "xbtlin (upstream), ported by xdhui",
+    "websiteURL": "https://github.com/xbtlin/ai-berkshire",
+    "iconUrl": "",
+    "category": "PRODUCTIVITY",
+    "defaultLocale": "zh-CN",
+    "locales": "./locales/",
+    "tryPrompts": [
+      "帮我深入研究贵州茅台是否值得投资",
+      "用买入前 Checklist 检查腾讯控股",
+      "对比一下新旧投资论述有没有漂移"
+    ],
+    "skillOverrides": {
+      "bottleneck-hunter": {
+        "displayName": "供应链瓶颈猎手",
+        "description": "扫描超级趋势产业链瓶颈环节,挖掘相关上市公司套利机会"
+      },
+      "deep-company-series": {
+        "displayName": "深度公司系列长文",
+        "description": "为一家公司撰写 3-8 篇《看懂XX》系列深度文章"
+      },
+      "dyp-ask": {
+        "displayName": "段永平问答",
+        "description": "以段永平的投资哲学与思维方式回答商业、投资、企业文化问题"
+      },
+      "earnings-review": {
+        "displayName": "财报精读",
+        "description": "基于一手财报原文对单家公司财报做深度解读与数据抽检"
+      },
+      "earnings-team": {
+        "displayName": "财报精读团队",
+        "description": "四大师视角解读财报,改写为可发布的公众号文章并经读者评审"
+      },
+      "era-alpha": {
+        "displayName": "时代α捕手",
+        "description": "识别当下核心高增长行业中有定价权与壁垒的 α 企业"
+      },
+      "financial-data": {
+        "displayName": "财务数据规范",
+        "description": "美股/港股/A股/台股的权威数据源与两源交叉验证规则"
+      },
+      "income-investment": {
+        "displayName": "分红收益投资分析",
+        "description": "评估公司分红的可持续性与机会型分红价值"
+      },
+      "industry-funnel": {
+        "displayName": "行业漏斗筛选",
+        "description": "从全市场逐层筛选,精选出 3 家价值投资标的"
+      },
+      "industry-research": {
+        "displayName": "行业产业链投资研究",
+        "description": "产业链全景扫描加上中下游个股分析,产出行业投资研究报告"
+      },
+      "investment-checklist": {
+        "displayName": "巴菲特买入前 Checklist",
+        "description": "对一家或多家公司逐项执行价值投资买入前检查清单"
+      },
+      "investment-research": {
+        "displayName": "系统化投资研究",
+        "description": "以四大师框架对单家公司做全面投资研究并产出报告"
+      },
+      "investment-team": {
+        "displayName": "投研团队",
+        "description": "商业模式、财务估值、行业竞争、风险管理四角色并行分析一家公司"
+      },
+      "management-deep-dive": {
+        "displayName": "管理层纵深研究",
+        "description": "评估公司 CEO 与核心管理层的能力圈、诚信度与资本配置记录"
+      },
+      "news-pulse": {
+        "displayName": "公司新闻脉搏",
+        "description": "股价异动时快速侦察事件、政策、行业与情绪,归因异动主因"
+      },
+      "portfolio-review": {
+        "displayName": "投资组合审视",
+        "description": "对整体持仓做健康度检查与优化建议"
+      },
+      "private-company-research": {
+        "displayName": "未上市公司深度研究",
+        "description": "多维度并行收集未上市公司碎片信息并交叉验证估值"
+      },
+      "quality-screen": {
+        "displayName": "去劣筛选",
+        "description": "用 7 条一流公司指标快速排除不合格标的"
+      },
+      "thesis-drift": {
+        "displayName": "投资论文漂移检测",
+        "description": "对比新旧投资论述,判断投资逻辑是否发生实质性漂移"
+      },
+      "thesis-tracker": {
+        "displayName": "投资论文追踪",
+        "description": "买入后按纪律定期检查估值锚点、关键假设与催化剂兑现"
+      },
+      "wechat-article": {
+        "displayName": "公众号深度文章",
+        "description": "作者-编辑-读者三视角流程,产出可发布的微信公众号深度稿"
+      }
+    }
+  },
+  "skills": "./skills/"
+}

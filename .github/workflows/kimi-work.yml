@@ -1,0 +1,83 @@
+# 上游 sync 触发的 Kimi Work 移植层产物再生成。
+# main 是纯上游镜像（Sync fork 走 fast-forward），main 收到 push 即代表上游有更新；
+# 本工作流 merge main 到 kimi-work、重跑构建（含转换规则命中断言），
+# 产物有变化则以 PR 形式向 kimi-work 提交，由人工作为适配审计把关。
+# 构建失败（含断言失败）时工作流标红且不开 PR。
+name: kimi-work-sync
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: kimi-work-sync
+  cancel-in-progress: true
+
+env:
+  BOT_BRANCH_PREFIX: bot/kimi-work-sync-
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  build-and-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout kimi-work
+        uses: actions/checkout@v4
+        with:
+          ref: kimi-work
+          fetch-depth: 0
+
+      - name: Fetch main
+        run: git fetch origin main
+
+      - name: Merge origin/main into kimi-work
+        # 路径与上游不相交，merge 应永远干净；冲突即红，人工处理
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git merge --no-edit origin/main
+
+      - name: Build (含转换规则命中断言)
+        run: python kimi-work/scripts/build_kimi_work_skills.py
+
+      - name: Detect product changes
+        id: diff
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit products to bot branch
+        if: steps.diff.outputs.changed == 'true'
+        id: bot
+        run: |
+          git add -A
+          git commit -m "chore(kimi-work): 上游 sync 触发的产物再生成 (run ${{ github.run_id }})"
+          # 已有未合并的同类 bot PR 时复用其分支 force-push 更新，不堆叠新 PR
+          EXISTING=$(gh pr list --base kimi-work --json headRefName \
+            --jq "[.[].headRefName | select(startswith(\"$BOT_BRANCH_PREFIX\"))][0] // empty")
+          if [ -n "$EXISTING" ]; then
+            BRANCH="$EXISTING"
+          else
+            BRANCH="${BOT_BRANCH_PREFIX}${{ github.run_id }}"
+          fi
+          git push -f origin "HEAD:$BRANCH"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Create PR (若无)
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          if gh pr list --base kimi-work --head "${{ github.repository_owner }}:${{ steps.bot.outputs.branch }}" --json number --jq 'length' | grep -q '^0$'; then
+            gh pr create --base kimi-work --head "${{ steps.bot.outputs.branch }}" \
+              --title "chore(kimi-work): 上游 sync 产物再生成" \
+              --body "由 kimi-work-sync 工作流自动生成（run ${{ github.run_id }}）。diff 即适配审计，请人工把关后合并。"
+          else
+            echo "同类 PR 已存在（${{ steps.bot.outputs.branch }}），force-push 已更新其内容。"
+          fi

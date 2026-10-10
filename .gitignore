@@ -38,3 +38,7 @@ reports/portfolio-latest.md
 
 # 懂车帝研究：涉及个人任职关系，只留本地（原目录已迁到 local/懂车帝/）
 /reports/懂车帝/
+
+# ===== Kimi Work 移植层（kimi-work 分支）=====
+# 散装技能产物内嵌本机绝对路径，不入库；插件产物入库
+kimi-work/dist/
