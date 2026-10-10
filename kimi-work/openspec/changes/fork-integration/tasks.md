@@ -24,9 +24,9 @@
 
 ## 5. 登记源切换与端到端验证
 
-- [ ] 5.1 用 `kimi-work/scripts/release_plugin.py` 从新 clone 重登记插件；验证注册表条目 sourcePath 指向新 clone 的 `kimi-work/plugin/personal/ai-berkshire/`
+- [x] 5.1 用 `kimi-work/scripts/release_plugin.py` 从新 clone 重登记插件；验证注册表条目 sourcePath 指向新 clone 的 `kimi-work/plugin/personal/ai-berkshire/`
 - [ ] 5.2 在 Kimi Work 个人页签点「更新」，验证插件免重启生效、至少一个技能可被触发；按既有格式把结果记入 `kimi-work/docs/verification.md`
-- [ ] 5.3 改写 `kimi-work/AGENTS.md` 的项目结构、环境事实与工作规则章节以匹配 fork 模型（clone 固定 `kimi-work` 分支的纪律、sync 流程、CI 把关）；验证文档中不再引用旧的"嵌套克隆"结构
+- [x] 5.3 改写 `kimi-work/AGENTS.md` 的项目结构、环境事实与工作规则章节以匹配 fork 模型（clone 固定 `kimi-work` 分支的纪律、sync 流程、CI 把关）；验证文档中不再引用旧的"嵌套克隆"结构
 - [ ] 5.4 （可选）单独 clone 一份固定作为登记源，与日常折腾的工作副本隔离；若做，验证登记条目指向登记源 clone
 
 ## 6. 收尾

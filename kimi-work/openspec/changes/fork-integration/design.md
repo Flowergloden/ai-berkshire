@@ -64,6 +64,10 @@ fork 仓库根（kimi-work 分支）
 
 本地新 clone fork 固定 checkout `kimi-work` 分支作为唯一工作副本；当前外层目录的文件迁移进新 clone 的 `kimi-work/` 后，用 `release_plugin.py` 重登记（sourcePath 指向新位置），Kimi Work 个人页签验证热更新。旧外层目录在验证通过后归档删除。OpenSpec 的 `openspec/` 目录随移植层一并迁入 `kimi-work/`。
 
+### D8: fork 默认分支设为 `kimi-work`（实施期发现，对 D1/D6 的必要补强）
+
+GitHub 只从**默认分支**发现 workflows（`push`/`workflow_dispatch` 触发均要求 workflow 文件存在于默认分支），而 D1 要求 `main` 纯镜像零自有 commit——workflow 放 `main` 会立刻破坏 fast-forward sync。因此把 fork 的默认分支改为 `kimi-work`：`main` 的纯镜像性与 Sync fork 行为不受影响（sync 的是分支内容而非默认分支设置），同时获得两个顺带的收益：PR 默认 base 即 `kimi-work`；clone 默认检出 `kimi-work`，与"本地固定 kimi-work 分支"的纪律一致。代价：仓库首页默认展示 `kimi-work` 而非上游 README——可接受。
+
 ## Risks / Trade-offs
 
 - [本地 clone 切分支导致登记源被偷偷换掉] → AGENTS.md 写明纪律；或单独一个 clone 专做登记源（tasks 中作为可选步骤）。
