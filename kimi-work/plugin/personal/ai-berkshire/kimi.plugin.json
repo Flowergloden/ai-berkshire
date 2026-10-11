@@ -1,7 +1,7 @@
 {
   "$schema": "https://catalog.msh.team/misc/kimi.plugin.schema.json",
   "name": "ai-berkshire",
-  "version": "0.1.0+local.20261011-110621",
+  "version": "0.1.0+local.20261011-110839",
   "description": "巴菲特/芒格/段永平/李录四大师价值投资方法论:15 个结构化投研技能(公司深度研究、财报精读团队、行业筛选、买入 Checklist、持仓管理、投资论文追踪)与配套验算工具",
   "keywords": [
     "价值投资",

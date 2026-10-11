@@ -2,7 +2,8 @@
 """清理本项目安装的 21 个散装技能（插件形态验证通过后的迁移收尾）。
 
 动作（install_skills.py 的逆操作，幂等）：
-1. 以 dist/ 下的技能包名单为准（即本项目安装的那批），删除
+1. 以 dist/ 下的技能包名单 + 构建脚本的 PRUNED_SKILLS（裁剪前已散装安装、
+   dist 中已无产物的被裁技能）为准，删除
    %APPDATA%\\kimi-desktop\\daimon-share\\daimon\\skills\\<name>\\ 目录；
 2. 从 official-skill-origins.json 移除对应登记（仅删本项目名单内的条目，不碰其他）。
 
@@ -25,12 +26,17 @@ KIMI_DESKTOP = Path(os.environ["APPDATA"]) / "kimi-desktop"
 SKILLS_DIR = KIMI_DESKTOP / "daimon-share" / "daimon" / "skills"
 ORIGINS_JSON = KIMI_DESKTOP / "kimi-agent" / "official-skill-origins.json"
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_kimi_work_skills import PRUNED_SKILLS  # noqa: E402  被裁技能：dist 无产物但散装可能残留
+
 
 def main():
     assume_yes = "--yes" in sys.argv[1:]
     if not DIST.is_dir():
         sys.exit("dist/ 不存在，无法确定本项目安装的技能名单")
-    names = sorted(p.name for p in DIST.iterdir() if (p / "SKILL.md").is_file())
+    names = sorted(
+        {p.name for p in DIST.iterdir() if (p / "SKILL.md").is_file()} | PRUNED_SKILLS
+    )
     if not names:
         sys.exit("dist/ 下没有技能包")
 

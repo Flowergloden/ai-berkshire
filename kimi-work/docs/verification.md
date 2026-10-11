@@ -80,3 +80,27 @@ GitHub 只从**默认分支**发现 workflows，与「main 纯镜像」冲突。
 - CI「产物有变化 → 开 PR」与「构建失败 → 红且不开 PR」两条路径未实测（当前无变化场景无法触发；待首次上游 sync 观察）。
 - 本次未重跑 B 类 tools 脚本抽验（`<plugin-root>` 占位解析在 2026-10-10 第 6 节前已验证过机制，本次迁移插件产物逐字节未变，仅安装来源路径变化）；如需可再跑 investment-checklist 抽验。
 - 旧外层目录 `ai-berkshire-kimi-work-integration\` 尚未归档删除（待确认无遗漏后执行，见 fork-integration 任务 6.1）。
+
+## 8. 技能裁剪与散装清理验证（2026-10-11 追加，prune-plugin-skills）
+
+裁剪内容：插件技能 21→15，被裁 6 个（`news-pulse`、`financial-data`、`earnings-review`、`deep-company-series`、`industry-research`、`portfolio-review`）；散装技能全量清理。详见 `../../openspec/changes/prune-plugin-skills/`。
+
+| 验证项 | 方法 | 结果 |
+|---|---|---|
+| 构建裁剪 | `build_kimi_work_skills.py` 输出 15 技能 + 12 tools；dist 与插件 skills/ 均无 6 个被裁目录 | ✅ 通过 |
+| 断言零校准 | `--check` 退出码 0（规则命中断言扫描全部上游源文件不变，期望计数零调整） | ✅ 通过 |
+| manifest/locales 同步 | manifest `skillOverrides` 键集合 == 插件 skills/ 目录集合（15）；locales 无被裁技能名；计数文案 21→15 | ✅ 通过 |
+| 散装清理 | `uninstall_loose_skills.py`（已修复：名单 = dist ∪ PRUNED_SKILLS）两轮共删 21 目录 + 21 条 origins 登记；`daimon-share/daimon/skills/` 与 `official-skill-origins.json` 均无 ai-berkshire 残留 | ✅ 通过 |
+| 重登记 | `release_plugin.py` 升版 `0.1.0+local.20261011-110839`；市场条目 `skillNames` 恰为 15 个保留技能 | ✅ 通过 |
+| 热更生效 | KimiCU 驱动 GUI：插件页「个人」页卡点「更新」→ 按钮变「使用」，详情页技能列表恰 15 个、描述显示「15 个结构化投研技能」 | ✅ 通过 |
+| 保留技能触发 | 新任务输入 `/investment`：slash 菜单出现 `ai-berkshire:income-investment / investment-checklist / investment-research / investment-team` | ✅ 通过 |
+| 被裁技能不触发 | 新任务输入 `/earnings-review` 与 `/financial`：slash 菜单均无匹配项 | ✅ 通过 |
+
+### 实施期发现（脚本缺陷已修复）
+
+`uninstall_loose_skills.py` 原以 dist/ 名单为准，而 dist 已无被裁技能的产物目录，导致首轮只清理 15 个、6 个被裁散装残留。已改为 dist ∪ PRUNED_SKILLS 并复验通过。
+
+### 已知限制（如实标注）
+
+- GUI 抽查由 KimiCU 自动化完成（点击「更新」、新任务输入 `/` 前缀观察菜单），未人工复验；如客户端有缓存延迟，以实际使用为准。
+- 被裁技能的「恢复路径」验证（从 PRUNED_SKILLS 删名 → 重构建 → 重发布）未实测，逻辑上同本次构建流程。
