@@ -28,6 +28,8 @@ description: "投研团队：商业模式、财务估值、行业竞争、风险
 3. **交叉验证纪律不变**：关键数据仍需两个独立来源，误差 >1% 须标记；官方插件与网页来源互为校验，不得因插件取数而省略第二来源。
 4. 插件不可用时按原有降级规则处理（醒目标注，禁止用训练知识冒充）。
 
+- **被裁技能引用（兜底）**：正文若提及 `news-pulse`、`financial-data`、`earnings-review`、`deep-company-series`、`industry-research`、`portfolio-review`——这 6 个技能未包含在本插件中，遇到此类引用时忽略其「调用该技能」的含义：取数需求按本节「数据获取路由」执行，其余需求（新闻侦察、业绩点评、行业研究、组合复盘等）以通用联网搜索 + 本技能正文的方法论完成。
+
 - **本地工具**：正文中 `python3 tools/xxx.py` 已全部改写为 `python <plugin-root>/tools/xxx.py`（Windows 环境下 `python3` 命令不存在，统一用 `python`）。`<plugin-root>` 指本插件的实际安装根目录——本 SKILL.md 位于 `<plugin-root>/skills/<技能名>/` 下，运行时据此向上两级解析得到绝对路径。这些工具仅依赖 Python 标准库，直接在终端运行即可。
 
 ### 多 Agent 编排的 Kimi Work 执行方式（重要）
@@ -173,7 +175,7 @@ description: "投研团队：商业模式、财务估值、行业竞争、风险
 
 **研究方法**：
 - 使用 WebSearch 搜索最新公开信息（财报、行业报告、新闻）
-- **财务数据必须来自两个独立来源**，按 financial-data 技能（同一 ai-berkshire 技能包/插件内的 `financial-data` 技能）中的数据源规范 规范执行（美股：macrotrends+stockanalysis；港股：aastocks+macrotrends；A股：东方财富+巨潮资讯；台股：FinMind `<plugin-root>/tools/twstock_data.py`+Goodinfo），两源误差>1%须标记
+- **财务数据必须来自两个独立来源**，按 本技能「Kimi Work 适配说明」中「数据获取路由」段所列的数据源规范 规范执行（美股：macrotrends+stockanalysis；港股：aastocks+macrotrends；A股：东方财富+巨潮资讯；台股：FinMind `<plugin-root>/tools/twstock_data.py`+Goodinfo），两源误差>1%须标记
 - 确保数据准确，关键数据标注来源
 - 分析要深入，不流于表面
 - **联网失败禁止伪装**：若 WebSearch 被拦截/不可用，禁止用训练知识冒充联网结果。必须在报告顶部醒目标注「⚠️ 本报告未能联网，基于训练知识（截止日期 X），置信度降级」，并如实告知 team-lead，由其决定是否中止研究
@@ -248,7 +250,7 @@ description: "投研团队：商业模式、财务估值、行业竞争、风险
 python <plugin-root>/tools/report_audit.py extract \
   --report <报告文件路径>
 
-# Step 2 — 对清单每项从可靠信源取数（参见 financial-data 技能中的数据源规范）
+# Step 2 — 对清单每项从可靠信源取数（参见 本技能适配说明中「数据获取路由」段所列的数据源规范）
 
 # Step 3 — 输出准出/打回判决
 python <plugin-root>/tools/report_audit.py verdict \

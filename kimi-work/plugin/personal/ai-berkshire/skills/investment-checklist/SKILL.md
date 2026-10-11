@@ -28,6 +28,8 @@ description: "巴菲特买入前 Checklist：对一家或多家公司逐项执�
 3. **交叉验证纪律不变**：关键数据仍需两个独立来源，误差 >1% 须标记；官方插件与网页来源互为校验，不得因插件取数而省略第二来源。
 4. 插件不可用时按原有降级规则处理（醒目标注，禁止用训练知识冒充）。
 
+- **被裁技能引用（兜底）**：正文若提及 `news-pulse`、`financial-data`、`earnings-review`、`deep-company-series`、`industry-research`、`portfolio-review`——这 6 个技能未包含在本插件中，遇到此类引用时忽略其「调用该技能」的含义：取数需求按本节「数据获取路由」执行，其余需求（新闻侦察、业绩点评、行业研究、组合复盘等）以通用联网搜索 + 本技能正文的方法论完成。
+
 - **本地工具**：正文中 `python3 tools/xxx.py` 已全部改写为 `python <plugin-root>/tools/xxx.py`（Windows 环境下 `python3` 命令不存在，统一用 `python`）。`<plugin-root>` 指本插件的实际安装根目录——本 SKILL.md 位于 `<plugin-root>/skills/<技能名>/` 下，运行时据此向上两级解析得到绝对路径。这些工具仅依赖 Python 标准库，直接在终端运行即可。
 
 ### 多 Agent 编排的 Kimi Work 执行方式（重要）

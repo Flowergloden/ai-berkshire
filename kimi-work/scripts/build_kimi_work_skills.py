@@ -5,7 +5,7 @@
 本脚本位于 fork 仓库（Flowergloden/ai-berkshire）kimi-work 分支的 kimi-work/scripts/ 下，
 以仓库根为上游源（main 分支是纯上游镜像），输出两类产物，幂等可重跑（上游 sync 后重新执行即可）：
 - kimi-work/dist/<name>/SKILL.md          —— 散装技能包（tools 用检出路径的绝对路径，install_skills.py 安装）
-- kimi-work/plugin/personal/ai-berkshire/ —— Kimi 插件产物：skills/<name>/SKILL.md ×21 + tools/*.py
+- kimi-work/plugin/personal/ai-berkshire/ —— Kimi 插件产物：skills/<name>/SKILL.md ×15（PRUNED_SKILLS 除外）+ tools/*.py
   （tools 引用用官方 <plugin-root> 占位约定；kimi.plugin.json 由官方脚手架一次性生成，本脚本不碰）
 用法（在仓库根执行）：
     python kimi-work/scripts/build_kimi_work_skills.py           # 生成全部
@@ -69,6 +69,19 @@ CATEGORY: dict[str, str] = {
 # 涉及取数的技能：adapter note 注入「数据获取路由」段（优先官方数据插件）。
 # dyp-ask / wechat-article 为纯问答/写作流程，不注入。
 DATA_ROUTED_EXCLUDE = {"dyp-ask", "wechat-article"}
+
+# 技能裁剪排除集：不参与 Kimi Work 产物生成（散装 dist + 插件 skills/）。
+# 上游源文件保留在仓库根 skills/ 不动（main 纯镜像纪律）；check_rule_hits 仍扫描全部
+# skills/*.md（断言是上游健康哨兵，与生成范围解耦）。恢复某技能 = 从集合删名 + 重跑构建 + 重发布。
+# 被裁理由见 openspec/changes/prune-plugin-skills 与 kimi-work/docs/adaptation-matrix.md。
+PRUNED_SKILLS = {
+    "news-pulse",        # playwright 雪球爬虫从未验证通过
+    "financial-data",    # 取数规范已被各技能 adapter note 的「数据获取路由」段实质吸收
+    "earnings-review",   # 与官方机构投研套件交付形态高重合
+    "deep-company-series",
+    "industry-research",
+    "portfolio-review",
+}
 
 # 每个 skill 的中文 description（决定 Kimi Work 自动触发质量）
 DESCRIPTIONS: dict[str, str] = {
@@ -144,18 +157,22 @@ def _rule_bare_tools(body: str, tp: str) -> tuple[str, int]:
 
 
 def _rule_xref_backtick(body: str, tp: str) -> tuple[str, int]:
-    # 交叉引用 skills/financial-data.md → 指向同包的 financial-data 技能
-    # 先数后换：替换串内嵌 "`financial-data`" 技能名，直接 subn 会重复匹配。
+    # 交叉引用 skills/financial-data.md → 指向本技能 adapter note 的「数据获取路由」段
+    # （financial-data 技能已被裁剪，其取数规范由该段实质吸收；不指向被裁技能的插件内名称）。
+    # 先数后换：避免替换串影响计数。
     n = body.count("`skills/financial-data.md`")
     return body.replace(
         "`skills/financial-data.md`",
-        "financial-data 技能（同一 ai-berkshire 技能包/插件内的 `financial-data` 技能）中的数据源规范",
+        "本技能「Kimi Work 适配说明」中「数据获取路由」段所列的数据源规范",
     ), n
 
 
 def _rule_xref_plain(body: str, tp: str) -> tuple[str, int]:
     n = body.count("skills/financial-data.md")
-    return body.replace("skills/financial-data.md", "financial-data 技能中的数据源规范"), n
+    return body.replace(
+        "skills/financial-data.md",
+        "本技能适配说明中「数据获取路由」段所列的数据源规范",
+    ), n
 
 
 def _rule_reports_backtick(body: str, tp: str) -> tuple[str, int]:
@@ -272,6 +289,11 @@ def adapter_note(name: str, source_name: str, category: str,
             "3. **交叉验证纪律不变**：关键数据仍需两个独立来源，误差 >1% 须标记；"
             "官方插件与网页来源互为校验，不得因插件取数而省略第二来源。",
             "4. 插件不可用时按原有降级规则处理（醒目标注，禁止用训练知识冒充）。",
+            "",
+            "- **被裁技能引用（兜底）**：正文若提及 `news-pulse`、`financial-data`、`earnings-review`、"
+            "`deep-company-series`、`industry-research`、`portfolio-review`——这 6 个技能未包含在本"
+            "插件中，遇到此类引用时忽略其「调用该技能」的含义：取数需求按本节「数据获取路由」执行，"
+            "其余需求（新闻侦察、业绩点评、行业研究、组合复盘等）以通用联网搜索 + 本技能正文的方法论完成。",
         ]
     if category in ("B", "C"):
         if tools_prefix == PLUGIN_TOOLS_PREFIX:
@@ -335,6 +357,8 @@ def expected_outputs() -> dict[Path, bytes]:
     outputs: dict[Path, bytes] = {}
     for source in sorted(CLAUDE_SKILLS.glob("*.md")):
         name = source.stem
+        if name in PRUNED_SKILLS:
+            continue
         if name not in CATEGORY:
             raise SystemExit(f"缺少分类映射：{name}")
         outputs[DIST / name / "SKILL.md"] = build_one(source).encode("utf-8")
@@ -375,6 +399,11 @@ def main() -> None:
         return
 
     DIST.mkdir(exist_ok=True)
+    # dist 散装目录非全量托管：清掉被裁技能的残留散装包（插件 skills/ 全量重建即可收敛）
+    for name in PRUNED_SKILLS:
+        stale_dist = DIST / name
+        if stale_dist.exists():
+            shutil.rmtree(stale_dist)
     # 插件 skills/tools 为全量托管目录：先清空再生成，保证无残留
     for managed in plugin_managed:
         if managed.exists():
@@ -382,10 +411,10 @@ def main() -> None:
     for path, content in outputs.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(content)
-    n_dist = len(list(CLAUDE_SKILLS.glob("*.md")))
+    n_skills = len(list(CLAUDE_SKILLS.glob("*.md"))) - len(PRUNED_SKILLS)
     n_tools = len(list((REPO / "tools").glob("*.py")))
-    print(f"已生成 {n_dist} 个散装技能包到 {DIST}")
-    print(f"已生成插件产物：{n_dist} 个技能 + {n_tools} 个工具脚本到 {PLUGIN_DIR}")
+    print(f"已生成 {n_skills} 个散装技能包到 {DIST}（已裁剪 {len(PRUNED_SKILLS)} 个）")
+    print(f"已生成插件产物：{n_skills} 个技能 + {n_tools} 个工具脚本到 {PLUGIN_DIR}")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 {
   "displayName": "AI Berkshire Value Investing",
   "shortDescription": "Four-masters value investing research workflows",
-  "longDescription": "Ported from the open-source project ai-berkshire (MIT): 21 value-investing research skills built on the methodologies of Buffett, Munger, Duan Yongping and Li Lu — covering deep research (company deep dives, management assessment, private companies), earnings analysis (earnings review, four-masters team reading), industry screening (industry research, funnel screening, bottleneck hunter, era alpha), portfolio management (portfolio review, thesis tracker, drift detection, news pulse) and thinking tools (Duan Yongping Q&A, WeChat article writing). Ships with validation scripts such as financial_rigor; data fetching prefers locally installed official data plugins. For learning and research only; not investment advice.",
+  "longDescription": "Ported from the open-source project ai-berkshire (MIT): 15 value-investing research skills built on the methodologies of Buffett, Munger, Duan Yongping and Li Lu — covering deep research (company deep dives, management assessment, private companies), earnings analysis (four-masters team reading), industry screening (funnel screening, bottleneck hunter, era alpha), portfolio management (thesis tracker, drift detection) and thinking tools (Duan Yongping Q&A, WeChat article writing). Ships with validation scripts such as financial_rigor; data fetching prefers locally installed official data plugins. For learning and research only; not investment advice.",
   "developerName": "xbtlin (upstream), ported by xdhui",
   "tryPrompts": [
     "Do a deep investment research on Kweichow Moutai for me",
@@ -13,17 +13,9 @@
       "displayName": "Bottleneck Hunter",
       "description": "Scan bottleneck links in mega-trend supply chains for listed-company opportunities"
     },
-    "deep-company-series": {
-      "displayName": "Deep Company Series",
-      "description": "Write a 3-8 part deep article series that explains one company"
-    },
     "dyp-ask": {
       "displayName": "Ask Duan Yongping",
       "description": "Answer business, investing and culture questions in Duan Yongping's mindset"
-    },
-    "earnings-review": {
-      "displayName": "Earnings Review",
-      "description": "Deep reading of one company's earnings report from primary filings with data spot checks"
     },
     "earnings-team": {
       "displayName": "Earnings Team",
@@ -33,10 +25,6 @@
       "displayName": "Era Alpha",
       "description": "Identify alpha companies with pricing power and moats in today's core growth industries"
     },
-    "financial-data": {
-      "displayName": "Financial Data Rules",
-      "description": "Authoritative data sources and two-source cross-validation rules for US/HK/A-share/TW markets"
-    },
     "income-investment": {
       "displayName": "Income Investing",
       "description": "Assess dividend sustainability and opportunistic dividend value"
@@ -44,10 +32,6 @@
     "industry-funnel": {
       "displayName": "Industry Funnel",
       "description": "Layer-by-layer market screening down to 3 value-investing picks"
-    },
-    "industry-research": {
-      "displayName": "Industry Chain Research",
-      "description": "Full industry-chain scan plus upstream/midstream/downstream stock analysis"
     },
     "investment-checklist": {
       "displayName": "Buffett Pre-Buy Checklist",
@@ -64,14 +48,6 @@
     "management-deep-dive": {
       "displayName": "Management Deep Dive",
       "description": "Assess CEO and core management circle of competence, integrity and capital allocation record"
-    },
-    "news-pulse": {
-      "displayName": "News Pulse",
-      "description": "Rapid reconnaissance of events, policy, industry and sentiment behind price moves"
-    },
-    "portfolio-review": {
-      "displayName": "Portfolio Review",
-      "description": "Health check and optimization advice for the whole portfolio"
     },
     "private-company-research": {
       "displayName": "Private Company Research",

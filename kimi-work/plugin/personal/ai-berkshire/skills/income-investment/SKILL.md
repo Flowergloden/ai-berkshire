@@ -28,6 +28,8 @@ description: "分红收益投资分析：评估公司分红的可持续性与机
 3. **交叉验证纪律不变**：关键数据仍需两个独立来源，误差 >1% 须标记；官方插件与网页来源互为校验，不得因插件取数而省略第二来源。
 4. 插件不可用时按原有降级规则处理（醒目标注，禁止用训练知识冒充）。
 
+- **被裁技能引用（兜底）**：正文若提及 `news-pulse`、`financial-data`、`earnings-review`、`deep-company-series`、`industry-research`、`portfolio-review`——这 6 个技能未包含在本插件中，遇到此类引用时忽略其「调用该技能」的含义：取数需求按本节「数据获取路由」执行，其余需求（新闻侦察、业绩点评、行业研究、组合复盘等）以通用联网搜索 + 本技能正文的方法论完成。
+
 ---
 
 
@@ -69,7 +71,7 @@ Use or refer to existing workflows instead of reproducing them:
 
 1. Run `date` before research. Put the data cutoff date in the report header.
 2. Prefer annual and interim reports, earnings releases, investor documents, regulatory filings, official releases, and official exchange data, in that order. Use secondary sources only to fill gaps and label them as secondary.
-3. Apply financial-data 技能（同一 ai-berkshire 技能包/插件内的 `financial-data` 技能）中的数据源规范: verify decision-critical financial data with at least two independent sources when available and flag discrepancies above 1%.
+3. Apply 本技能「Kimi Work 适配说明」中「数据获取路由」段所列的数据源规范: verify decision-critical financial data with at least two independent sources when available and flag discrepancies above 1%.
 4. Date or period-label every time-sensitive figure. Separate every material statement as **Verified fact**, **Estimate**, **Assumption**, or **Analytical judgment**.
 5. Use `python <plugin-root>/tools/financial_rigor.py` for exact payout, yield, valuation, market-cap, portfolio-income, and scenario arithmetic. Never rely on mental arithmetic for a decision-sensitive result.
 6. After saving the report, run the `tools/report_audit.py extract` and `verdict` workflow. A report that fails audit is a draft, not publishable research.
